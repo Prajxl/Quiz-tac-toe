@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .choices {
+            margin-bottom: 10px;
+        }
+        button {
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #result {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Quiz Game</h1>
+<div id="quiz-container"></div>
+<div id="result"></div>
+
+<script>
+    const quizData = {
+        "response_code": 0,
+        "results": [
+            {
+                "type": "multiple",
+                "difficulty": "easy",
+                "category": "Entertainment: Cartoon &amp; Animations",
+                "question": "Which of the following is not a Flintstones character?",
+                "correct_answer": "Lord Rockingham IX",
+                "incorrect_answers": [
+                    "Rockhead Slate",
+                    "The Great Gazoo",
+                    "Barney Rubble"
+                ]
+            },
+            {
+                "type": "multiple",
+                "difficulty": "easy",
+                "category": "Geography",
+                "question": "What is the official language of Costa Rica?",
+                "correct_answer": "Spanish",
+                "incorrect_answers": [
+                    "English",
+                    "Portuguese",
+                    "Creole"
+                ]
+            }
+        ]
+    };
+
+    const quizContainer = document.getElementById('quiz-container');
+    const resultContainer = document.getElementById('result');
+    let score = 0;
+    let questionIndex = 0;
+
+    function loadQuestion() {
+        quizContainer.innerHTML = '';
+        if (questionIndex < quizData.results.length) {
+            const questionData = quizData.results[questionIndex];
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `<h2>${questionData.question}</h2>`;
+
+            const choicesDiv = document.createElement('div');
+            choicesDiv.className = 'choices';
+
+            let choices = [...questionData.incorrect_answers, questionData.correct_answer];
+            choices = choices.sort(() => Math.random() - 0.5); // Shuffle choices
+
+            choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.innerText = choice;
+                button.onclick = () => checkAnswer(choice, questionData.correct_answer);
+                choicesDiv.appendChild(button);
+            });
+
+            questionDiv.appendChild(choicesDiv);
+            quizContainer.appendChild(questionDiv);
+        } else {
+            quizContainer.innerHTML = `<h2>You've completed the quiz!</h2>`;
+            resultContainer.innerHTML = `Your final score is ${score}/${quizData.results.length}`;
+        }
+    }
+
+    function checkAnswer(selected, correct) {
+        if (selected === correct) {
+            score++;
+            resultContainer.innerHTML = `Correct! Your score is ${score}`;
+        } else {
+            resultContainer.innerHTML = `Wrong! The correct answer was ${correct}. Your score is ${score}`;
+        }
+        questionIndex++;
+        setTimeout(loadQuestion, 1000); // Load the next question after 1 second
+    }
+
+    // Load the first question
+    loadQuestion();
+</script>
+
+</body>
+</html>
